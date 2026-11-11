@@ -10,6 +10,20 @@ Tempo estimado: 15 minutos. Tudo pelo site da Cloudflare, sem instalar nada no c
 
 As tarefas continuam guardadas apenas no iPhone. O servidor guarda só os lembretes dos próximos 30 dias.
 
+## Caminho rápido: pelo GitHub (app e notificações no mesmo endereço)
+
+Com o projeto no GitHub, um único Worker da Cloudflare publica o app **e** o servidor de notificações. Não é preciso Netlify nem editar o `duda-config.json`: o app encontra o servidor sozinho em `/api`.
+
+1. Crie o banco em **Storage & Databases › D1 › Create** com o nome `duda-push` e copie o **Database ID**.
+2. No `wrangler.toml` da raiz do repositório, confira:
+   - `name` igual ao nome do Worker criado na Cloudflare;
+   - `database_id` com o código copiado.
+3. Na Cloudflare, **Workers & Pages › Create › Import a repository**, escolha o repositório. Deploy command: `npx wrangler deploy` (o próprio arquivo já manda gerar a pasta `dist`).
+4. Ao terminar, o endereço `https://NOME.SEU-USUARIO.workers.dev` abre o DUDA, e `…/api/` mostra `{"app":"DUDA","status":"ok",…}`.
+5. Instale esse endereço no iPhone pela Tela de Início e siga o **Passo 9**.
+
+## Caminho pelo painel (sem GitHub)
+
 ## Passo 1. Criar a conta
 
 1. Acesse **dash.cloudflare.com/sign-up** e crie uma conta gratuita (e-mail e senha).

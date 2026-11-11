@@ -1,8 +1,9 @@
-# Usado apenas se publicar pela linha de comando (npx wrangler deploy).
-# Pelo painel da Cloudflare este arquivo não é necessário.
-name = "duda-push"
+# Alternativa: use este arquivo se configurar "Root directory" = push-server na Cloudflare.
+# O normal é usar o wrangler.toml da raiz do projeto.
+name = "kkk"
 main = "worker.js"
 compatibility_date = "2025-06-01"
+workers_dev = true
 
 [triggers]
 crons = ["* * * * *"]
@@ -10,7 +11,7 @@ crons = ["* * * * *"]
 [[d1_databases]]
 binding = "DB"
 database_name = "duda-push"
-database_id = "COLE_AQUI_O_ID_DO_BANCO"
+database_id = "4f087553-1088-405c-a729-a59b2a2cb385"
 
 [vars]
 ALLOWED_ORIGIN = ""

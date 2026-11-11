@@ -2,6 +2,7 @@
  * Notificações com o app fechado (Web Push) usando o servidor gratuito da Cloudflare (pasta push-server/).
  *
  * O endereço do servidor vem, nesta ordem:
+ *   0. se o app estiver publicado no mesmo Worker do servidor, /api do próprio endereço (automático)
  *   1. do arquivo /duda-config.json  { "pushServer": "https://duda-push.SEU-USUARIO.workers.dev" }
  *      (pode ser editado dentro da pasta dist, sem recompilar)
  *   2. da variável de build VITE_PUSH_SERVER_URL
@@ -32,6 +33,15 @@ export function pushServer(): Promise<string> {
         try { url = localStorage.getItem(SERVER_CACHE) || ""; } catch { /* */ }
       }
       if (!url) url = (import.meta.env.VITE_PUSH_SERVER_URL as string | undefined) || "";
+      if (!url) {
+        // App publicado no mesmo Worker do servidor (Cloudflare): usa /api do próprio endereço
+        try {
+          const r = await fetch("/api/", { cache: "no-store" });
+          const data = r.ok && (r.headers.get("content-type") || "").includes("json") ? await r.json() : null;
+          if (data && data.app === "DUDA") url = location.origin + "/api";
+        } catch { /* offline: usa o último endereço conhecido */ }
+      }
+      if (!url) { try { url = localStorage.getItem(SERVER_CACHE) || ""; } catch { /* */ } }
       url = url.trim().replace(/\/+$/, "");
       try { localStorage.setItem(SERVER_CACHE, url); } catch { /* */ }
       return url;

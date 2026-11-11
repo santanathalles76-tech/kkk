@@ -1,0 +1,28 @@
+# DUDA na Cloudflare: o mesmo Worker publica o app (pasta dist) e o servidor de notificações (/api).
+# O "name" precisa ser igual ao nome do projeto (Worker) criado na Cloudflare.
+name = "kkk"
+main = "push-server/worker.js"
+compatibility_date = "2025-06-01"
+workers_dev = true
+
+# Gera a pasta dist antes de publicar
+[build]
+command = "npm run build"
+
+[assets]
+directory = "./dist"
+binding = "ASSETS"
+not_found_handling = "single-page-application"
+run_worker_first = ["/api", "/api/*"]
+
+[triggers]
+crons = ["* * * * *"]
+
+[[d1_databases]]
+binding = "DB"
+database_name = "duda-push"
+database_id = "4f087553-1088-405c-a729-a59b2a2cb385"
+
+[vars]
+ALLOWED_ORIGIN = ""
+VAPID_SUBJECT = ""

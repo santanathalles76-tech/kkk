@@ -33,6 +33,7 @@ export default defineConfig({
         globIgnores: ["splash/**", "duda-config.json"],
         importScripts: ["push-sw.js"],
         navigateFallback: "/index.html",
+        navigateFallbackDenylist: [/^\/api/],
         cleanupOutdatedCaches: true,
         clientsClaim: true,
         skipWaiting: true

@@ -7,6 +7,9 @@
  *   - um gatilho Cron "* * * * *" (a cada minuto)
  * As chaves de notificação (VAPID) são criadas sozinhas no primeiro acesso e guardadas no D1.
  *
+ * Se o Worker também publicar o app (assets = pasta dist), as rotas abaixo ficam sob /api
+ * (ex.: /api/subscribe) e todo o resto é o próprio DUDA.
+ *
  * Rotas:
  *   GET    /                    status
  *   GET    /vapid-public-key    chave pública para o app assinar as notificações
@@ -28,10 +31,14 @@ export default {
     const cors = corsHeaders(request, env);
     if (request.method === "OPTIONS") return new Response(null, { status: 204, headers: cors });
     try {
+      const url = new URL(request.url);
+      // Quando o mesmo Worker também publica o app (pasta dist), as rotas do servidor ficam em /api
+      const isApi = url.pathname === "/api" || url.pathname.startsWith("/api/");
+      if (!isApi && env.ASSETS) return env.ASSETS.fetch(request);
+      const path = isApi ? url.pathname.slice(4) : url.pathname;
+      const route = request.method + " " + path.replace(/\/+$/, "");
       if (!env.DB) return json({ erro: "Banco D1 não ligado ao Worker (variável DB)." }, 500, cors);
       await ensureSchema(env.DB);
-      const url = new URL(request.url);
-      const route = request.method + " " + url.pathname.replace(/\/+$/, "");
 
       if (route === "GET " || route === "GET /") {
         const n = await env.DB.prepare("SELECT COUNT(*) AS n FROM devices").first();
