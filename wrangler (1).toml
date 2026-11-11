@@ -1,0 +1,18 @@
+# Servidor de notificações do DUDA (Cloudflare Workers).
+# O "name" precisa ser igual ao nome do projeto (Worker) criado na Cloudflare.
+name = "kkk"
+main = "push-server/worker.js"
+compatibility_date = "2025-06-01"
+workers_dev = true
+
+[triggers]
+crons = ["* * * * *"]
+
+[[d1_databases]]
+binding = "DB"
+database_name = "duda-push"
+database_id = "4f087553-1088-405c-a729-a59b2a2cb385"
+
+[vars]
+ALLOWED_ORIGIN = ""
+VAPID_SUBJECT = ""
